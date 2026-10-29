@@ -5,9 +5,10 @@
    1. Settings you can change
    ------------------------------------------------------------------ */
 const CONFIG = {
-  // Paste a form endpoint here (for example from formspree.io) to start
-  // collecting emails. While it is empty, forms show a "not connected" note.
-  FORM_ENDPOINT: "",
+  // Every launch-email and "Notify me" sign-up is sent here by FormSubmit
+  // (formsubmit.co), which forwards it to the inbox below. The first
+  // sign-up triggers a one-time activation email to that inbox.
+  FORM_ENDPOINT: "https://formsubmit.co/ajax/bloomwellventures@gmail.com",
   CURRENCY: "INR",
 };
 
@@ -314,18 +315,33 @@ function initForms() {
         msg.textContent = "Thanks! This form isn't connected yet, so your email wasn't sent.";
         return;
       }
-      msg.textContent = "Sending…";
+      const interest = form.dataset.interest || "newsletter";
+      const what = interest === "newsletter" ? "Launch email" : interest === "checkout" ? "Orders open" : `Notify me: ${interest}`;
+      const button = $("button[type=submit]", form);
+      msg.textContent = "Signing you up…";
+      if (button) button.disabled = true;
       try {
         const res = await fetch(CONFIG.FORM_ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({ email, interest: form.dataset.interest || "newsletter" }),
+          body: JSON.stringify({
+            email,
+            "Signed up for": what,
+            Page: location.pathname,
+            _subject: `New FibreFit sign-up: ${what}`,
+            _template: "table",
+            _captcha: "false",
+            _honey: "",
+          }),
         });
-        if (!res.ok) throw new Error(res.status);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || String(data.success) !== "true") throw new Error(data.message || res.status);
         msg.textContent = "You're on the list. We'll email you at launch.";
         form.reset();
       } catch (err) {
-        msg.textContent = "That didn't go through. Check your connection and try again.";
+        msg.textContent = `That didn't go through. Try again, or email us at bloomwellventures@gmail.com.`;
+      } finally {
+        if (button) button.disabled = false;
       }
     });
   });

@@ -5,10 +5,11 @@
    1. Settings you can change
    ------------------------------------------------------------------ */
 const CONFIG = {
-  // Every launch-email and "Notify me" sign-up is sent here by FormSubmit
-  // (formsubmit.co), which forwards it to the inbox below. The first
-  // sign-up triggers a one-time activation email to that inbox.
-  FORM_ENDPOINT: "https://formsubmit.co/ajax/bloomwellventures@gmail.com",
+  // Every launch-email and "Notify me" sign-up is sent through Web3Forms
+  // (web3forms.com) to bloomwellventures@gmail.com. The access key below is
+  // meant to be public; it only lets this site send sign-ups to that inbox.
+  FORM_ENDPOINT: "https://api.web3forms.com/submit",
+  FORM_ACCESS_KEY: "85df38af-9dbd-4b70-82ee-cfd01d2e8943",
   CURRENCY: "INR",
 };
 
@@ -325,21 +326,16 @@ function initForms() {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
           body: JSON.stringify({
+            access_key: CONFIG.FORM_ACCESS_KEY,
+            subject: `New FibreFit sign-up: ${what}`,
+            from_name: "FibreFit website",
             email,
             "Signed up for": what,
             Page: location.pathname,
-            _subject: `New FibreFit sign-up: ${what}`,
-            _template: "table",
-            _captcha: "false",
-            _honey: "",
+            botcheck: false,
           }),
         });
         const data = await res.json().catch(() => ({}));
-        if (/activat/i.test(data.message || "")) {
-          // FormSubmit hasn't been activated for this inbox yet.
-          msg.textContent = "Sign-ups need a one-time activation. Check bloomwellventures@gmail.com for an \"Activate form\" email.";
-          return;
-        }
         if (!res.ok || String(data.success) !== "true") throw new Error(data.message || res.status);
         msg.textContent = "You're on the list. We'll email you at launch.";
         form.reset();

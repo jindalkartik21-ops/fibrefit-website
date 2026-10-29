@@ -68,7 +68,7 @@ The assistant only answers from `js/knowledge.js`, never gives medical advice, a
 | What | Where |
 | --- | --- |
 | FSSAI licence number | The footer of every page (search for `[to be added]` in each .html file) |
-| Launch-email sign-ups | Already connected: every sign-up and "Notify me" goes to bloomwellventures@gmail.com through FormSubmit. **The first sign-up sends a one-time "Activate form" email to that inbox. Click the activate button, or sign-ups won't arrive.** To change the inbox, edit `FORM_ENDPOINT` at the top of `js/main.js`. |
+| Launch-email sign-ups | Connected: every sign-up and "Notify me" goes to bloomwellventures@gmail.com through Web3Forms, using the access key in `FORM_ACCESS_KEY` at the top of `js/main.js`. Manage it at web3forms.com. |
 | Taking payments | The **Check out** button opens an "orders open soon" message. Connect Razorpay or Shopify when you're ready to sell. |
 | Directors' notes | The two quotes in `about.html` are drafts. Kartik and Suhavi should rewrite them in their own words. |
 | Support hours | Add your calling hours to `support.html` if you want to show them |

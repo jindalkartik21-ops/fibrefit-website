@@ -7,7 +7,7 @@ It's a plain HTML, CSS and JavaScript site. There's no build step and nothing to
 ## What's in here
 
 ```
-index.html          Home: hero glass, fibre facts in numbers (70% fall short, Lancet figures), what fibre does, six use cases, the range, evidence table, how to take, FAQ, sign-up
+index.html          Home: botanical "inside one sachet" plate, fibre facts in numbers (70% fall short, Lancet figures), what fibre does, six use cases, the range, evidence table, how to take, FAQ, sign-up
 daily-fibre.html    Product page: pack picker, add to cart, what's inside, how to take, warnings
 science.html        How fibre works, with how sure the science is for each benefit
 about.html          Why FibreFit exists, who fibre is for, and notes from the directors

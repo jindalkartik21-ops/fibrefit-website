@@ -83,58 +83,24 @@ function initMenu() {
 }
 
 /* ------------------------------------------------------------------
-   5. The glass ("Every gram has a job")
-   Five fibre layers in a glass of water, each as tall as its weight.
+   5. The botanical plate ("Every gram has a job")
+   Tap a plant to see what its fibre does.
    ------------------------------------------------------------------ */
-function glassSVG(uid) {
-  const TOP = 24, BOTTOM = 372, PX_PER_G = 24;
-  const wallL = (y) => 40 + (18 * (y - TOP)) / (BOTTOM - TOP);
-  const wallR = (y) => 210 - (18 * (y - TOP)) / (BOTTOM - TOP);
-  const outline = "M40 24 L57.3 358 Q58 372 72 372 L178 372 Q192 372 192.7 358 L210 24";
-  const fillTop = BOTTOM - 12 * PX_PER_G;
-
-  let y = BOTTOM;
-  const layers = FIBRES.map((f) => {
-    const h = f.grams * PX_PER_G;
-    const top = y - h;
-    const mid = top + h / 2;
-    y = top;
-    const label = f.short || f.name;
-    return `<g class="layer" data-fibre="${f.key}" tabindex="0" role="button" aria-pressed="false"
-        aria-label="${f.name}, ${f.grams} grams">
-      <rect class="layer-fill" x="30" y="${top + 1}" width="200" height="${h - 2}" style="fill:${f.colour}" clip-path="url(#glass-${uid})"/>
-      <rect class="hit" x="${wallR(mid)}" y="${top}" width="${400 - wallR(mid)}" height="${h}"/>
-      <line class="leader" x1="${wallR(mid) + 8}" y1="${mid}" x2="234" y2="${mid}"/>
-      <text class="layer-label" x="242" y="${mid + 5}">${label} <tspan class="w">${fmtGrams(f.grams)}</tspan></text>
-    </g>`;
-  }).join("");
-
-  return `<svg class="glass" viewBox="0 0 400 392" aria-label="A glass with five fibre layers, stacked by weight">
-    <defs><clipPath id="glass-${uid}"><path d="${outline} Z"/></clipPath></defs>
-    <rect class="water" x="30" y="46" width="200" height="${fillTop - 46}" clip-path="url(#glass-${uid})"/>
-    ${layers}
-    <line class="shine" x1="58" y1="64" x2="70" y2="290"/>
-    <path class="rim" d="${outline}"/>
-  </svg>`;
-}
-
 function initGramGrid() {
-  $$("[data-gram-card]").forEach((card, i) => {
-    const wrap = $(".glass-wrap", card);
+  $$("[data-gram-card]").forEach((card) => {
+    const grid = $(".b-grid", card);
     const panel = $(".gram-job", card);
-    if (!wrap || !panel) return;
+    if (!grid || !panel) return;
     const hint = panel.innerHTML;
-    wrap.innerHTML = glassSVG(i);
-    const svg = $("svg", wrap);
-
     let current = null;
+
     const select = (key) => {
       current = current === key ? null : key;
-      svg.classList.toggle("has-focus", !!current);
-      $$(".layer", svg).forEach((l) => {
-        const on = l.dataset.fibre === current;
-        l.classList.toggle("on", on);
-        l.setAttribute("aria-pressed", String(on));
+      grid.classList.toggle("has-focus", !!current);
+      $$(".b-cell", grid).forEach((c) => {
+        const on = c.dataset.fibre === current;
+        c.classList.toggle("on", on);
+        c.setAttribute("aria-pressed", String(on));
       });
       if (!current) {
         panel.innerHTML = hint;
@@ -146,16 +112,9 @@ function initGramGrid() {
         <p>${f.job}</p><p class="small">${share}% of every sachet.</p>`;
     };
 
-    svg.addEventListener("click", (e) => {
-      const l = e.target.closest(".layer");
-      if (l) select(l.dataset.fibre);
-    });
-    svg.addEventListener("keydown", (e) => {
-      const l = e.target.closest(".layer");
-      if (l && (e.key === "Enter" || e.key === " ")) {
-        e.preventDefault();
-        select(l.dataset.fibre);
-      }
+    grid.addEventListener("click", (e) => {
+      const c = e.target.closest(".b-cell");
+      if (c) select(c.dataset.fibre);
     });
   });
 }

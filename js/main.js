@@ -335,11 +335,18 @@ function initForms() {
           }),
         });
         const data = await res.json().catch(() => ({}));
+        if (/activat/i.test(data.message || "")) {
+          // FormSubmit hasn't been activated for this inbox yet.
+          msg.textContent = "Sign-ups need a one-time activation. Check bloomwellventures@gmail.com for an \"Activate form\" email.";
+          return;
+        }
         if (!res.ok || String(data.success) !== "true") throw new Error(data.message || res.status);
         msg.textContent = "You're on the list. We'll email you at launch.";
         form.reset();
       } catch (err) {
-        msg.textContent = `That didn't go through. Try again, or email us at bloomwellventures@gmail.com.`;
+        msg.textContent = window.claude
+          ? "Sign-ups only work on the live website, not in this preview."
+          : "That didn't go through. Try again, or email us at bloomwellventures@gmail.com.";
       } finally {
         if (button) button.disabled = false;
       }
